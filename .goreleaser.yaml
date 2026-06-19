@@ -1,0 +1,67 @@
+# goreleaser v2 — the canonical base config (pure Go, CGO_ENABLED=0). Layer
+# recipes on top (zig CGO, build tags, universal binaries, embed-prebuild) per
+# reference/go-ci-and-release.md. Validate locally: goreleaser release --snapshot --clean
+version: 2
+
+project_name: cc-merge
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: cc-merge
+    main: ./cmd/cc-merge
+    binary: cc-merge
+    env:
+      - CGO_ENABLED=0
+    goos: [darwin, linux]
+    goarch: [amd64, arm64]
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/yasyf/cc-merge/internal/version.Version={{ .Version }}
+      - -X github.com/yasyf/cc-merge/internal/version.Commit={{ .Commit }}
+      - -X github.com/yasyf/cc-merge/internal/version.Date={{ .CommitDate }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    # Developer ID sign + notarize the darwin binaries via Apple's own codesign +
+    # notarytool (see scripts/macos-codesign.sh). goreleaser's built-in quill signer
+    # is deliberately NOT used: its arm64 signatures get SIGKILLed on macOS 15/26
+    # (anchore/quill#566, closed "not planned"). Needs a macOS runner; no-op without
+    # the MACOS_* signing env. See reference/go-ci-and-release.md.
+    hooks:
+      post:
+        - cmd: bash scripts/macos-codesign.sh "{{ .Path }}" "{{ .Target }}"
+          output: true
+
+archives:
+  - id: cc-merge
+    formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: checksums.txt
+
+homebrew_casks:
+  - name: cc-merge
+    binaries:
+      - cc-merge
+    repository:
+      owner: yasyf
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    homepage: "https://github.com/yasyf/cc-merge"
+    description: "Merge queue for git worktrees with finished Claude outputs."
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/cc-merge"]
+          end
+
+release:
+  prerelease: auto
+
+changelog:
+  use: github
