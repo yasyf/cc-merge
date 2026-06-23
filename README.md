@@ -22,12 +22,6 @@ Homebrew (macOS):
 brew install yasyf/tap/cc-merge
 ```
 
-Or with the Go toolchain:
-
-```bash
-go install github.com/yasyf/cc-merge/cmd/cc-merge@latest
-```
-
 ## Quickstart
 
 Confirm the install works:
