@@ -4,7 +4,7 @@
 
 [![Release](https://img.shields.io/github/v/release/yasyf/cc-merge?sort=semver)](https://github.com/yasyf/cc-merge/releases)
 [![CI](https://img.shields.io/github/actions/workflow/status/yasyf/cc-merge/ci.yml?branch=main&label=ci)](https://github.com/yasyf/cc-merge/actions/workflows/ci.yml)
-[![License: PolyForm-Noncommercial-1.0.0](https://img.shields.io/badge/License-PolyForm-Noncommercial-1.0.0-blue.svg)](https://github.com/yasyf/cc-merge/blob/main/LICENSE)
+[![License: PolyForm-Noncommercial-1.0.0](https://img.shields.io/badge/License-PolyForm--Noncommercial--1.0.0-blue.svg)](https://github.com/yasyf/cc-merge/blob/main/LICENSE)
 
 Merge queue for git worktrees with finished Claude outputs.
 
