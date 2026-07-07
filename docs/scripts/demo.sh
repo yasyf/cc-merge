@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Regenerates docs/assets/demo.png from a real `cc-merge --help` run.
-# Requires freeze (https://github.com/charmbracelet/freeze) and a Go toolchain.
+# Requires freeze (https://github.com/charmbracelet/freeze), bat, and a Go toolchain.
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 
@@ -14,8 +14,10 @@ go build -o "$tmp/cc-merge" ./cmd/cc-merge
   "$tmp/cc-merge" --help
 } >"$tmp/demo.txt"
 
-freeze "$tmp/demo.txt" \
-  --language text \
+bat --plain --color=always --language help "$tmp/demo.txt" >"$tmp/demo.ansi"
+
+freeze "$tmp/demo.ansi" \
+  --language ansi \
   --theme github-dark \
   --background "#0d1117" \
   --window \
