@@ -1,0 +1,7 @@
+fragments = [
+  "cc-merge-development-guide",
+  "cc-skills:ccx",
+  "go-style",
+  "cc-skills:version-control",
+  "part-1",
+]
